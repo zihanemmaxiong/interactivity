@@ -2,33 +2,54 @@
 title: "plot.ly and dashboards"
 author: "Zihan Xiong"
 date: "2025-10-21"
-output: github_document
+output: html_document
 ---
 # web-centric tools
 plotly provides a platform for online data analytics and visualizations;
 build on of HTML etc.;
 "grammar of graphics" in ggplot;
 convey a lot of info in a easy-to-understand format.
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+```{r, message=FALSE}
+library(tidyverse)
+library(plotly)
+
+library(p8105.datasets)
 ```
 
-## R Markdown
+Lets load the Airbnb datsets.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+data("nyc_airbnb")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+nyc_airbnb=nyc_airbnb|>
+  mutate(
+    rating=review_scores_location/2
+  )|>
+  select(
+    neighbourhood_group, neighbourhood, rating, price, room_type, lat, long
+  )|>
+  filter(
+    neighbourhood_group=="Manhattan",
+    room_type=="Entire home/apt",
+    price <= 500,
+    price >=100
+  )
 
-```{r cars}
-summary(cars)
+nyc_airbnb
 ```
 
-## Including Plots
+Let's make a scatterplot but interactive at this time.
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+nyc_airbnb |>
+  mutate(
+    label=str_c("Price:&", price, "\nRating: ", rating)
+  )|>
+  plot_ly(
+    x = ~lat, y=~long, color=~price, 
+    text=~label,
+    type = "scatter", mode = "markers", alpha=.5
+  )
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
