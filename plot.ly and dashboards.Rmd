@@ -53,3 +53,183 @@ nyc_airbnb |>
   )
 ```
 
+lets make a boxplot
+```{r}
+nyc_airbnb |>
+  mutate(
+    neighbourhood=fct_reorder(neighbourhood,price)) |>
+
+  plot_ly(
+    x=~neighbourhood, y=~price,color=~neighbourhood,
+    type="box", colors = "viridis"
+  )
+```
+
+barcharts
+
+```{r}
+nyc_airbnb |> 
+  count(neighbourhood) |> 
+  mutate(neighbourhood = fct_reorder(neighbourhood, n)) |> 
+  plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar", colors = "viridis")
+```
+## ggplotly
+
+do not use this often!
+```{r}
+ggp_scatterplot=
+  nyc_airbnb|>
+  ggplot(aes(x=lat, y=long, color=price))+
+  geom_point()
+
+ggplotly(ggp_scatterplot)
+```
+
+# writing functions
+```{r}
+library(tidyverse)
+library(rvest)
+
+set.seed(1)
+
+```
+```{r}
+x_vec = rnorm(25, mean = 5, sd = 3)
+
+(x_vec - mean(x_vec)) / sd(x_vec)
+```
+
+```{r}
+z_scores = function(x) {
+  
+  z = (x - mean(x)) / sd(x)
+  z
+  
+}
+
+z_scores(x_vec)
+```
+```{r}
+z_scores(3)
+```
+
+```{r}
+z_scores("my name is jeff")
+```
+```{r}
+z_scores(iris)
+```
+```{r}
+z_scores(sample(c(TRUE, FALSE), 25, replace = TRUE))
+```
+
+```{r}
+z_scores = function(x) {
+  
+  if (!is.numeric(x)) {
+    stop("Argument x should be numeric")
+  } else if (length(x) == 1) {
+    stop("Z scores cannot be computed for length 1 vectors")
+  }
+  
+  z = mean(x) / sd(x)
+  
+  z
+}
+```
+
+multiple outputs
+```{r}
+mean_and_sd = function(x) {
+  
+  if (!is.numeric(x)) {
+    stop("Argument x should be numeric")
+  } else if (length(x) == 1) {
+    stop("Cannot be computed for length 1 vectors")
+  }
+  
+  mean_x = mean(x)
+  sd_x = sd(x)
+
+  list(mean = mean_x, 
+       sd = sd_x)
+}
+```
+
+```{r}
+mean_and_sd = function(x) {
+  
+  if (!is.numeric(x)) {
+    stop("Argument x should be numeric")
+  } else if (length(x) == 1) {
+    stop("Cannot be computed for length 1 vectors")
+  }
+  
+  mean_x = mean(x)
+  sd_x = sd(x)
+
+  tibble(
+    mean = mean_x, 
+    sd = sd_x
+  )
+}
+```
+
+multiple inputs
+```{r}
+
+```
+
+```{r}
+sim_mean_sd(mu=48,50)
+```
+
+```{r}
+fellowship_ring=
+  read_excel("data/LotR_Words.xlsx", range="B3:D6") |>
+  mutate(movie="Fellowship of the Ring")
+
+two_towers=
+  read_excel("data/LotR_Words.xlsx", range="F3:H6") |>
+  mutate(movie="Two Towers")
+
+return_of_the_king=
+  read_excel("data/LotR_Words.xlsx", range="J3:L6") |>
+  mutate(movie="Return of the King")
+
+lotr_df=
+  
+```
+
+```{r}
+lotr_import=function(cell_range,movie_title) {
+  df=
+    read_excel("data/LotR_Words.xlsx", range=cell_range) |>
+    mutate(movie=movie_title)
+  
+  df
+}
+
+fellowship=lotr_import(cell_range="B3:D6", movie_title = "Fellowship")
+two_towers=lotr_import(cell_range = "F3:H6", movie_title = "Two Towers")
+return=lotr_import(cell_range="J3:L6", movie_title = "Return")
+
+bind_rows(fellowship,two_towers,return)
+```
+one more example!
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

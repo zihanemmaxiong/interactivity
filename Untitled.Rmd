@@ -1,0 +1,75 @@
+---
+title: "Flexdashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+
+library(p8105.datasets)
+```
+
+```{r}
+data("nyc_airbnb")
+
+nyc_airbnb=nyc_airbnb|>
+  mutate(
+    rating=review_scores_location/2
+  )|>
+  select(
+    neighbourhood_group, neighbourhood, rating, price, room_type, lat, long
+  )|>
+  filter(
+    neighbourhood_group=="Manhattan",
+    room_type=="Entire home/apt",
+    price <= 500,
+    price >=100
+  )
+
+nyc_airbnb
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+nyc_airbnb |>
+  mutate(
+    label=str_c("Price:&", price, "\nRating: ", rating)
+  )|>
+  plot_ly(
+    x = ~lat, y=~long, color=~price, 
+    text=~label,
+    type = "scatter", mode = "markers", alpha=.5
+  )
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+nyc_airbnb |>
+  mutate(
+    neighbourhood=fct_reorder(neighbourhood,price)) |>
+
+  plot_ly(
+    x=~neighbourhood, y=~price,color=~neighbourhood,
+    type="box", colors = "viridis"
+  )
+```
+
+### Chart C
+
+```{r}
+
+```
+
